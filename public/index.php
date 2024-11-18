@@ -31,4 +31,6 @@
     // $product->describe();
 
     // $database = new Database\Product();
+
+    require "../src/views/layout.php";
 ?>

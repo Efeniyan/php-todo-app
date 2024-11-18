@@ -1,3 +1,5 @@
+<?php $content = "Hello world !📢🔊"; ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,6 +8,9 @@
     <title>Todo List</title>
 </head>
 <body>
-    
+    <div class="container">
+        <?= $content ?>
+
+    </div>
 </body>
 </html>
