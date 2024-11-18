@@ -1,0 +1,19 @@
+{
+    "name": "rolande.dossou/php-todo-app",
+    "description": "Une todo list en php",
+    "type": "project",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/",
+            "Database\\": "database/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Rolande Dossou",
+            "email": "rolandedossou76@gmail.com"
+        }
+    ],
+    "require": {}
+}
