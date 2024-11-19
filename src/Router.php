@@ -78,6 +78,6 @@ class Router {
 
         // Si aucune correspondance n'est trouvée, retourner une erreur 404
         http_response_code(404);
-        echo "404";
+        echo "404 Page non trouvée";
     }
 }
