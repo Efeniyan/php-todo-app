@@ -8,7 +8,14 @@ class TodoController {
             session_start(); //Récupérer la session existante
         }
 
-        $todos = $_SESSION["todos"];
+        $todos = $_SESSION["todos"] ?? [];
+        
+        // if (isset($_SESSION["todos"])) {
+        //     $todos = $_SESSION["todos"];
+        // }else{
+        //     $todos = [];
+        // }
+
         //Charger la vue "Views/index.php
         // require __DIR__ . "/../views/index.php"; // Méthode 1
         require dirname(__DIR__) . "/views/index.php"; // Méthode 2
