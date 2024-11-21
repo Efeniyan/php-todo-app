@@ -2,19 +2,19 @@
 
 namespace App\Controllers;
 
+
+use App\Models\Todo;
 use DB\Database;
 
 class TodoController
 {
+    private Todo $todoModel;
+    public function __construct(){
+        $this->todoModel = new Todo();
+    }
     public function index()
     {
-        // Récuperer l'instance de connexion à la bdd
-        $db = Database::getInstance();
-
-        //Récupérer les tâches depuis la bdd
-        $query = $db->query("SELECT * FROM todos;");
-        $todos = $query->fetchAll(); // retourne le resultat de l'exécution de la requête
-
+       $todos = $this->todoModel->getAll();
         
         // //Récupérer les tâches depuis la session
         // if (!isset($_SESSION)) {
@@ -44,15 +44,7 @@ class TodoController
             $task = trim($_POST['task']);
 
             if ($task) {
-                $db = Database::getInstance();
-                // préparer la requête sql pou insérer une new tâche dans la table "todos" 
-                // Les placeholders 'task' et 'done' sont utilisés pour éviter les injections SQL 
-                // Cela sécurise les données entrez par le user
-                $stmt = $db->prepare("INSERT INTO todos (task, done) VALUES (:task, :done);"); 
-                 // exécution de la rêquete 
-                 // - ':task' contient la sdescription de la tâche saisie par le user
-                 // - ':done ' est initialisé à 0 pour indiquer que la tâche n'est pas terminée
-                $stmt->execute([":task" => $task, ":done" => 0]);
+                $this->todoModel->add($task);
 
                 // $_SESSION['todos'][] = [
                 //     'id' => uniqid("todo_"),
@@ -124,13 +116,12 @@ class TodoController
         }
     }
 
+    
     public function delete()
     {
         $id = $_GET['id'] ?? null;
         if ($id) {
-            $db = Database::getInstance();
-            $stmt = $db->prepare("DELETE FROM todos WHERE id = :id;");
-            $stmt->execute(["id" => (int) $id]);
+           $this->todoModel->delete((int) $id);
             // $_SESSION['todos'] = array_filter($_SESSION['todos'], function ($todo) use ($id) {
             //     return $todo['id'] !== $id;
             // });
@@ -143,10 +134,8 @@ class TodoController
     {
         $id = $_GET['id'] ?? null;
         if ($id) {
-            $db = DATABASE::getInstance();
-            $stmt = $db->prepare("UPDATE todos SET done = NOT done Where id = :id");
-            $stmt->execute(["id" => (int) $id]); 
-                  
+           
+            $this->todoModel->toggle((int) $id);
             // foreach ($_SESSION['todos'] as &$todo) {
             //     if ($todo['id'] === $id) {
             //         $todo['done'] = !$todo['done'];

@@ -19,7 +19,7 @@
         "vlucas/phpdotenv": "^5.6"
     }, 
     "scripts": {
-        "start" : " php -S localhost:8080 -t public", 
+        "start" : " php -S localhost:5000 -t public", 
         "migrate": "php database/Migrations/migrate.php"
     }
 }
