@@ -10,6 +10,7 @@
             <?= htmlspecialchars($todo['task']); ?>
         </span>
         <a href="/toggle?id=<?= $todo['id'] ?>">✅</a>
+        <a href="/update?id=<?= $todo['id'] ?>">✍</a>
         <a href="/delete?id=<?= $todo['id'] ?>">❌</a>
     </li>
     <?php endforeach; ?>

@@ -1,8 +1,11 @@
 <?php
+
 namespace App\Controllers;
 
-class TodoController {
-    public function index(){
+class TodoController
+{
+    public function index()
+    {
         //Récupérer les tâches depuis la session
         if (!isset($_SESSION)) {
             session_start(); //Récupérer la session existante
@@ -25,16 +28,17 @@ class TodoController {
         require dirname(__DIR__) . "/Views/index.php"; // Méthode 2
     }
 
-    public function add(){
+    public function add()
+    {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $task = trim($_POST['task']);
 
             if ($task) {
                 $_SESSION['todos'][] = [
-                    'id'=> uniqid("todo_"),
-                    'task'=> $task,
-                    'done'=>false
-                ]; 
+                    'id' => uniqid("todo_"),
+                    'task' => $task,
+                    'done' => false
+                ];
             }
 
             header('Location: /');
@@ -42,13 +46,64 @@ class TodoController {
         }
 
         // Charger la vue add.php
-        require dirname(__DIR__) . "/Views/add.php"; 
+        require dirname(__DIR__) . "/Views/add.php";
     }
 
-    public function delete(){
+    public function update()
+    {
+        // Vérifier si l'ID de la tâche est fourni dans la requête GET
         $id = $_GET['id'] ?? null;
         if ($id) {
-            $_SESSION['todos'] = array_filter($_SESSION['todos'], function($todo) use ($id){
+            // Vérifier si une donnée POST a été envoyée pour mettre à jour la tâche
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                // Récupérer la nouvelle tâche depuis le formulaire
+                $newTask = trim($_POST['task']);
+                // $newDoneStatus = isset($_POST['done']) ? true : false; // Si un checkbox "done" est coché
+
+                // Trouver la tâche et la mettre à jour
+                foreach ($_SESSION['todos'] as &$todo) {
+                    if ($todo['id'] === $id) {
+                        $todo['task'] = $newTask; // Mettre à jour la description de la tâche
+                        $todo['done'] = false; // Mettre à jour le statut de la tâche
+                    }
+                }
+
+                // Rediriger vers la page d'accueil
+                header('Location: /');
+                exit;
+            } else {
+                // Si la méthode est GET, afficher le formulaire de modification
+
+                // Trouver la tâche à modifier
+                $todoToEdit = null;
+                foreach ($_SESSION['todos'] as $todo) {
+                    if ($todo['id'] === $id) {
+                        $todoToEdit = $todo;
+                        break;
+                    }
+                }
+
+                // Charger la vue pour la modification de la tâche
+                if ($todoToEdit) {
+                    require dirname(__DIR__) . "/Views/update.php"; // Charger le formulaire de modification
+                } else {
+                    // Si la tâche n'existe pas, rediriger vers la page d'accueil
+                    header('Location: /');
+                    exit;
+                }
+            }
+        } else {
+            // Si l'ID n'est pas fourni, rediriger vers la page d'accueil
+            header('Location: /');
+            exit;
+        }
+    }
+
+    public function delete()
+    {
+        $id = $_GET['id'] ?? null;
+        if ($id) {
+            $_SESSION['todos'] = array_filter($_SESSION['todos'], function ($todo) use ($id) {
                 return $todo['id'] !== $id;
             });
         }
@@ -56,10 +111,11 @@ class TodoController {
         exit;
     }
 
-    public function toggle(){
+    public function toggle()
+    {
         $id = $_GET['id'] ?? null;
         if ($id) {
-            foreach($_SESSION['todos'] as &$todo){
+            foreach ($_SESSION['todos'] as &$todo) {
                 if ($todo['id'] === $id) {
                     $todo['done'] = !$todo['done'];
                 }
