@@ -1,5 +1,5 @@
 
-<?php ob_start(); ?>
+<?php ob_start(); ?> 
 <h1>Modifier la tâche</h1>
 <form action="/update?id=<?= htmlspecialchars($todoEdit['id']); ?>" method="post">
     <input type="text" name="task" id="task" value="<?= htmlspecialchars($todoEdit['task']); ?>" placeholder="Modifier la tâche" required>

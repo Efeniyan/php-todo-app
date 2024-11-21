@@ -15,5 +15,8 @@
             "email": "rolandedossou76@gmail.com"
         }
     ],
-    "require": {}
+    "require": {}, 
+    "scripts": {
+        "start" : " php -S localhost:5000 -t public"
+    }
 }
