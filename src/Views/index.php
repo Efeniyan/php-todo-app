@@ -1,4 +1,5 @@
 <?php
+// var_dump( $tods);
 ob_start(); ?>
  <!-- Ici tout ce qui est entre ob_start et ob_get_clean sont stockés dans le tampon -->
 

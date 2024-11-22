@@ -9,13 +9,14 @@ use DB\Database;
 class TodoController extends Controller
 {
     private Todo $todoModel;
-    public function __construct(){
+    public function __construct()
+    {
         $this->todoModel = new Todo();
     }
     public function index()
     {
-       $todos = $this->todoModel->getAll();
-        
+        $todos = $this->todoModel->getAll();
+
         // //Récupérer les tâches depuis la session
         // if (!isset($_SESSION)) {
         //     session_start(); //Récupérer la session existante
@@ -35,7 +36,8 @@ class TodoController extends Controller
         //Charger la vue "Views/index.php
         // require __DIR__ . "/../views/index.php"; // Méthode 1
 
-        $this->View( "index", ["tods" => $todos] ); // Méthode 2
+
+        $this->View("index", ["tods" => $todos]); // Méthode 2
     }
 
     public function add()
@@ -53,84 +55,69 @@ class TodoController extends Controller
                 // ];
             }
 
-            $this->redirect("/");
+            $this->redirect('/');
         }
 
         // Charger la vue add.php
-        $this->View( "index" );
+        $this->View("index");
     }
 
     public function update()
     {
-        // Vérifier si l'ID de la tâche est fourni dans la requête GET
-        $id = $_GET['id'] ?? null;
-        $task = $_GET['task'] ?? null;
+        // Vérifier si l'ID de la tâche est fourni dans la requête GET ou POST
+        $id = $_GET['id'] ?? $_POST['id'] ?? null; // Ajouter $_POST['id'] pour récupérer l'ID envoyé via POST
+
         if ($id) {
-            // Vérifier si une donnée POST a été envoyée pour mettre à jour la tâche
+            // Trouver la tâche à modifier en récupérant l'élément avec cet ID
+            $todoToEdit = $this->todoModel->getById((int)$id);
+
             if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 // Récupérer la nouvelle tâche depuis le formulaire
                 $newTask = trim($_POST['task']);
-                // $newDoneStatus = isset($_POST['done']) ? true : false; // Si un checkbox "done" est coché
 
-                // Trouver la tâche et la mettre à jour
-                // foreach ($_SESSION['todos'] as &$todo) {
-                    if ($id) {
-                        $db = Database::getInstance();
-                        $stmt = $db->prepare("UPDATE todos SET task = :task AND done = :done;"); 
-                        $stmt->execute([":task" => $newTask, ":done" => 0]);
+                if ($newTask && $id) {
+                    // Mettre à jour la tâche avec le nouvel intitulé
+                    $this->todoModel->update((int)$id, $newTask);
 
-                        // $todo['task'] = $newTask; // Mettre à jour la description de la tâche
-                        // $todo['done'] = false; // Mettre à jour le statut de la tâche
-                    }
-                // }
-
-                // Rediriger vers la page d'accueil
-                $this->redirect( "/" );
-            } else {
-                // Si la méthode est GET, afficher le formulaire de modification
-
-                // Trouver la tâche à modifier
-                $todoToEdit = null;
-                // foreach ($_SESSION['todos'] as $todo) {
-                    if ($id) {
-                        // $todoToEdit = $todo;
-                        // break;
-                    }
-                // }
-
-                // Charger la vue pour la modification de la tâche
-                if ($todoToEdit) {
-                    $this->View( "update" ); // Charger le formulaire de modification
+                    // Rediriger vers la page d'accueil après la mise à jour
+                    $this->redirect('/');
                 } else {
-                    // Si la tâche n'existe pas, rediriger vers la page d'accueil
-                    $this->redirect( "/" );
+                    $this->redirect('/update?id=' . $id);  // Redirige vers le formulaire avec l'ID de la tâche
                 }
+            }
+
+            // Si la méthode est GET, on affiche le formulaire de modification avec les données actuelles
+            if ($todoToEdit) {
+                $this->View("update", ["todoEdit" => $todoToEdit]);  // Passer la tâche sous la clé "todoEdit"
+            } else {
+                // Si la tâche n'existe pas, rediriger vers la page d'accueil
+                $this->redirect('/');
             }
         } else {
             // Si l'ID n'est pas fourni, rediriger vers la page d'accueil
-            $this->redirect( "/" );
+            $this->redirect('/');
         }
     }
 
-    
+
+
     public function delete()
     {
         $id = $_GET['id'] ?? null;
         if ($id) {
-           $this->todoModel->delete((int) $id);
+            $this->todoModel->delete((int) $id);
             // $_SESSION['todos'] = array_filter($_SESSION['todos'], function ($todo) use ($id) {
             //     return $todo['id'] !== $id;
             // });
         }
-        $this->redirect( "/" );
-       
+        $this->redirect('/');
     }
 
     public function toggle()
     {
         $id = $_GET['id'] ?? null;
         if ($id) {
-           
+
             $this->todoModel->toggle((int) $id);
             // foreach ($_SESSION['todos'] as &$todo) {
             //     if ($todo['id'] === $id) {
@@ -138,6 +125,6 @@ class TodoController extends Controller
             //     }
             // }
         }
-        $this->redirect("/");
+        $this->redirect('/');
     }
 }

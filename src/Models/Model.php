@@ -3,7 +3,7 @@ namespace App\Models;
 
 use DB\Database;
 
-abstract class Model{
+class Model{
     protected $db;
 
     public function __construct(){

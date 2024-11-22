@@ -1,7 +1,7 @@
 <?php
 namespace App\Controllers;
 
-abstract class Controller {
+class Controller {
 
     /**
      * Méthode pour charger unr vur
@@ -20,7 +20,7 @@ abstract class Controller {
      * @return never
      */
     protected function redirect ( string $url){
-        header("Location: ,$url");
+        header("Location: $url");
         exit;
     }
 }

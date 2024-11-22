@@ -3,6 +3,8 @@
 
 namespace App\Models;
 
+use PDO;
+
 class Todo extends Model
 {
     /**
@@ -12,7 +14,7 @@ class Todo extends Model
      */
     public function getAll()
     {
-        
+
 
         //Récupérer les tâches depuis la bdd
         $query = $this->db->query("SELECT * FROM todos;");
@@ -21,7 +23,7 @@ class Todo extends Model
     }
     public function add(string $task)
     {
-        
+
         // préparer la requête sql pou insérer une new tâche dans la table "todos" 
         // Les placeholders 'task' et 'done' sont utilisés pour éviter les injections SQL 
         // Cela sécurise les données entrez par le user
@@ -34,7 +36,25 @@ class Todo extends Model
 
     public function create() {}
 
-    public function update() {}
+    public function update(int $id, string $newTask)
+    {
+        $stmt = $this->db->prepare("UPDATE todos SET task = :task , done = :done WHERE id = :id;");
+        $stmt->execute(["id" => (int) $id, ":task" => $newTask, ":done" => 0]);
+    }
+
+    public function getById(int $id)
+{
+   
+    $query = "SELECT * FROM todos WHERE id = :id LIMIT 1";
+    $stmt = $this->db->prepare($query);
+    $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+    $stmt->execute();
+    
+    return $stmt->fetch(PDO::FETCH_ASSOC);  // Retourner la tâche sous forme de tableau associatif
+}
+
+
+
 
     /**
      * Summary of toggle
@@ -42,12 +62,10 @@ class Todo extends Model
      * @param int $id
      * @return void
      */
-    public function toggle(int $id) {
-
-        
+    public function toggle(int $id)
+    {
         $stmt = $this->db->prepare("UPDATE todos SET done = NOT done Where id = :id");
-        $stmt->execute(["id" => (int) $id]); 
-              
+        $stmt->execute(["id" => (int) $id]);
     }
 
     /**
@@ -55,8 +73,9 @@ class Todo extends Model
      * @param int $id L'identifiant
      * @return void
      */
-    public function delete(int $id) {
-        
+    public function delete(int $id)
+    {
+
         $stmt = $this->db->prepare("DELETE FROM todos WHERE id = :id;");
         $stmt->execute(["id" => (int) $id]);
     }
