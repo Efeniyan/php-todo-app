@@ -6,7 +6,7 @@ namespace App\Controllers;
 use App\Models\Todo;
 use DB\Database;
 
-class TodoController
+class TodoController extends Controller
 {
     private Todo $todoModel;
     public function __construct(){
@@ -35,7 +35,7 @@ class TodoController
         //Charger la vue "Views/index.php
         // require __DIR__ . "/../views/index.php"; // Méthode 1
 
-        require dirname(__DIR__) . "/Views/index.php"; // Méthode 2
+        $this->View( "index", ["tods" => $todos] ); // Méthode 2
     }
 
     public function add()
@@ -53,12 +53,11 @@ class TodoController
                 // ];
             }
 
-            header('Location: /');
-            exit;
+            $this->redirect("/");
         }
 
         // Charger la vue add.php
-        require dirname(__DIR__) . "/Views/add.php";
+        $this->View( "index" );
     }
 
     public function update()
@@ -86,8 +85,7 @@ class TodoController
                 // }
 
                 // Rediriger vers la page d'accueil
-                header('Location: /');
-                exit;
+                $this->redirect( "/" );
             } else {
                 // Si la méthode est GET, afficher le formulaire de modification
 
@@ -102,17 +100,15 @@ class TodoController
 
                 // Charger la vue pour la modification de la tâche
                 if ($todoToEdit) {
-                    require dirname(__DIR__) . "/Views/update.php"; // Charger le formulaire de modification
+                    $this->View( "update" ); // Charger le formulaire de modification
                 } else {
                     // Si la tâche n'existe pas, rediriger vers la page d'accueil
-                    header('Location: /');
-                    exit;
+                    $this->redirect( "/" );
                 }
             }
         } else {
             // Si l'ID n'est pas fourni, rediriger vers la page d'accueil
-            header('Location: /');
-            exit;
+            $this->redirect( "/" );
         }
     }
 
@@ -126,8 +122,8 @@ class TodoController
             //     return $todo['id'] !== $id;
             // });
         }
-        header('Location: /');
-        exit;
+        $this->redirect( "/" );
+       
     }
 
     public function toggle()
@@ -142,7 +138,6 @@ class TodoController
             //     }
             // }
         }
-        header('Location: /');
-        exit;
+        $this->redirect("/");
     }
 }

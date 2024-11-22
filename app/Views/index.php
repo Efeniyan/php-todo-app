@@ -1,10 +1,12 @@
-<?php ob_start(); ?>
+<?php
+var_dump(value: $tods);
+ob_start(); ?>
  <!-- Ici tout ce qui est entre ob_start et ob_get_clean sont stockés dans le tampon -->
 
 <h1>Ma Todo List </h1>
 <a href="/add">Ajouter une nouvelle tâche</a>
 <ul>
-    <?php foreach ($todos as $todo): ?>
+    <?php foreach ($tods as $todo): ?>
     <li>
         <span style="width:200px; text-decoration: <?= $todo['done'] ? 'line-through' : 'none' ?>;">
             <?= htmlspecialchars($todo['task']); ?>
